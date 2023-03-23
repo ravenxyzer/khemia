@@ -1,7 +1,7 @@
-import { EmbedBuilder } from "discord.js";
-import { Colors } from "../..";
+import { EmbedBuilder as BaseEmbedBuilder } from "discord.js";
+import { Colors } from "..";
 
-export class Embed extends EmbedBuilder {
+export class EmbedBuilder extends BaseEmbedBuilder {
     public constructor() {
         super();
         this.setColor(Colors.default);

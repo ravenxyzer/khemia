@@ -1,5 +1,4 @@
 import { Subcommand, SubcommandOptions } from "@sapphire/plugin-subcommands";
-import { Utils } from "..";
 
 export interface CommandExtendedDescription {
     usage: string;
@@ -13,13 +12,11 @@ export interface CommandOptions extends SubcommandOptions {
 
 export abstract class Command extends Subcommand {
     extendedDescription: CommandExtendedDescription;
-    utils: Utils;
 
     constructor(context: Subcommand.Context, options: CommandOptions) {
         super(context, { ...options });
 
         this.extendedDescription = options.extendedDescription;
-        this.utils = new Utils();
     }
 }
 

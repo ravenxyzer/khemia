@@ -1,11 +1,8 @@
 import { LogLevel, SapphireClient } from "@sapphire/framework";
 import { Time } from "@sapphire/time-utilities";
 import { Partials } from "discord.js";
-import { Utils } from "..";
 
 export class Client extends SapphireClient {
-    utils: Utils;
-
     public constructor() {
         super({
             allowedMentions: {
@@ -47,8 +44,6 @@ export class Client extends SapphireClient {
             partials: [Partials.Channel, Partials.GuildMember, Partials.Message, Partials.Reaction],
             typing: true,
         });
-
-        this.utils = new Utils();
     }
 
     public login(token: string): Promise<string> {

@@ -7,7 +7,7 @@ import {
     ChatInputCommandDeniedPayload,
     ContextMenuCommandDeniedPayload,
 } from "@sapphire/framework";
-import { Message, EmbedBuilder, InteractionResponse } from "discord.js";
+import { Message, EmbedBuilder, InteractionResponse, Embed } from "discord.js";
 
 import { Listener } from "../../libraries";
 
@@ -18,7 +18,7 @@ import { Listener } from "../../libraries";
 })
 export class MessageCommandDeniedListener extends Listener {
     async run(error: UserError, data: MessageCommandDeniedPayload): Promise<Message> {
-        const embed: EmbedBuilder = this.utils.embed().isErrorEmbed(true);
+        const embed: EmbedBuilder = new EmbedBuilder();
 
         switch (error.identifier) {
             case Identifiers.PreconditionCooldown:
@@ -55,7 +55,7 @@ export class MessageCommandDeniedListener extends Listener {
 })
 export class ChatInputCommandDeniedListener extends Listener {
     async run(error: UserError, data: ChatInputCommandDeniedPayload): Promise<InteractionResponse<boolean>> {
-        const embed: EmbedBuilder = this.utils.embed().isErrorEmbed(true);
+        const embed: EmbedBuilder = new EmbedBuilder();
         switch (error.identifier) {
             case Identifiers.PreconditionCooldown:
                 embed.setDescription("🛑・The command you are using is on cooldown!");
@@ -78,7 +78,7 @@ export class ChatInputCommandDeniedListener extends Listener {
                 return data.interaction.reply({ embeds: [embed] });
 
             default:
-                embed.setDescription(`🛑・${error.identifier}\n${this.utils.codeBlock(error.message)}`);
+                embed.setDescription(`🛑・${error.identifier}\n\`\`\`${error.message}\`\`\``);
                 return data.interaction.reply({ embeds: [embed] });
         }
     }
@@ -91,7 +91,7 @@ export class ChatInputCommandDeniedListener extends Listener {
 })
 export class ContextMenuCommandDeniedListener extends Listener {
     async run(error: UserError, data: ContextMenuCommandDeniedPayload): Promise<InteractionResponse<boolean>> {
-        const embed: EmbedBuilder = this.utils.embed().isErrorEmbed(true);
+        const embed: EmbedBuilder = new EmbedBuilder();
         switch (error.identifier) {
             case Identifiers.PreconditionCooldown:
                 embed.setDescription("🛑・The command you are using is on cooldown!");
@@ -114,7 +114,7 @@ export class ContextMenuCommandDeniedListener extends Listener {
                 return data.interaction.reply({ embeds: [embed] });
 
             default:
-                embed.setDescription(`🛑・${error.identifier}\n${this.utils.codeBlock(error.message)}`);
+                embed.setDescription(`🛑・${error.identifier}\n\`\`\`${error.message}\`\`\``);
                 return data.interaction.reply({ embeds: [embed] });
         }
     }

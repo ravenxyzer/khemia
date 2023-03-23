@@ -12,7 +12,6 @@ import { Presences, Listener } from "../../libraries";
 })
 export class ReadyListener extends Listener {
     public async run(): Promise<void> {
-        const database = process.env.DATABASE_URL;
         const { logger, client } = this.container;
 
         logger.info(`Logged in as ${client.user.tag}`);
@@ -21,7 +20,7 @@ export class ReadyListener extends Listener {
             client.user.setPresence({
                 activities: [
                     {
-                        name: this.utils.randomArray(Presences),
+                        name: Presences[0],
                         type: ActivityType.Watching,
                     },
                 ],

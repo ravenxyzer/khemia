@@ -1,6 +1,6 @@
 import { Subcommand } from "@sapphire/plugin-subcommands";
 
-import { Utils } from "..";
+import { Utils, TimeUtils, MessageUtils } from "../../utilities";
 import * as Preconditions from "../../preconditions";
 
 declare module "@sapphire/framework" {
@@ -15,9 +15,10 @@ declare module "@sapphire/framework" {
     }
 }
 
-declare module "@sapphire/pieces" {
-    interface Container {
+declare module "@sapphire/plugin-utilities-store" {
+    export interface Utilities {
         utils: Utils;
-        database: IDatabase;
+        message: MessageUtils;
+        time: TimeUtils;
     }
 }

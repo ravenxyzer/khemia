@@ -1,20 +1,23 @@
 {
   "dependencies": {
+    "@prisma/client": "^4.11.0",
     "@sapphire/decorators": "^6.0.0",
     "@sapphire/discord.js-utilities": "^6.0.2",
     "@sapphire/framework": "^4.2.2",
     "@sapphire/plugin-subcommands": "^4.0.0",
+    "@sapphire/plugin-utilities-store": "^1.0.0",
     "@sapphire/time-utilities": "^1.7.8",
+    "dayjs": "^1.11.7",
     "discord.js": "^14.8.0",
-    "dotenv": "^16.0.3",
-    "prisma": "^4.11.0"
+    "dotenv": "^16.0.3"
   },
   "devDependencies": {
-    "@sapphire/ts-config": "^3.3.4"
+    "@sapphire/ts-config": "^3.3.4",
+    "prisma": "^4.11.0"
   },
   "name": "khemia",
   "version": "1.0.0",
-  "main": "dist/Khemia.js",
+  "main": "dist/khemia.js",
   "scripts": {
     "cpl": "tsc --skipLibCheck",
     "cpl-w": "tsc --skipLibCheck -w",
