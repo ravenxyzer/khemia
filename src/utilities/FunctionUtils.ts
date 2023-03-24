@@ -3,7 +3,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 import { Utility } from "@sapphire/plugin-utilities-store";
 import { setTimeout } from "node:timers/promises";
 
-import { EmbedBuilder } from "../../libraries";
+import { EmbedBuilder } from "../libraries";
 
 @ApplyOptions<Utility.Options>({
     name: "functions",
