@@ -16,11 +16,10 @@ import { Command } from "../../libraries";
 })
 export class AttendanceCommand extends Command {
     public override async messageRun(message: Message): Promise<void> {
-        const utils = this.container.utilities.utils;
-
+        const { funcs } = this.container.utilities;
         await message.channel.send({
             embeds: [
-                utils
+                funcs
                     .embed()
                     .setTitle("✍️ ・ Staff Attendance")
                     .setDescription("> Tekan tombol dibawah untuk absen kehadiran!"),

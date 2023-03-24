@@ -23,6 +23,7 @@ export const Developers: string[] = [
 export const Emojis = {
     loading: "<a:loading:1080031855836930049>",
     checkmark: "<:checkmark:1080037252765335572>",
+    redcross: "<:red_cross:1083636400689262624>",
 };
 
 /**
