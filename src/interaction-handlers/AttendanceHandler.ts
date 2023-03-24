@@ -2,6 +2,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 import { InteractionHandlerTypes } from "@sapphire/framework";
 import { PrismaClient } from "@prisma/client";
 import { ButtonInteraction, EmbedBuilder, TextChannel } from "discord.js";
+
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
@@ -20,113 +21,183 @@ export class AttendanceHandler extends InteractionHandler {
     }
 
     public override async run(interaction: ButtonInteraction): Promise<void> {
-        const { funcs } = this.container.utilities;
-        const client = this.container.client;
+        const { funcs, time } = this.container.utilities;
+        const { user } = this.container.client;
         const channel: TextChannel = interaction.guild.channels.cache.get("1087844895726784612") as TextChannel;
         const prisma: PrismaClient = new PrismaClient();
 
         const embed: EmbedBuilder = funcs.embed();
-        embed.setAuthor({ name: "Kehadiran Staff!", iconURL: client.user.displayAvatarURL({ size: 4096 }) });
+        embed.setAuthor({ name: "Kehadiran Staff!", iconURL: user.displayAvatarURL({ size: 4096 }) });
         embed.setThumbnail(interaction.user.displayAvatarURL({ size: 4096 }));
         embed.setDescription(`${Emojis.checkmark} ・ ${interaction.user.tag} telah mengisi absen.`);
         embed.setFooter({ text: "Terima kasih sudah absen dan tingkatkan terus kehadiranmu!" });
 
-        const now = dayjs(new Date()).utcOffset(7);
+        const now = dayjs().utcOffset(7);
+        const daysInMonth = now.daysInMonth();
 
-        const user = await prisma.user.findFirst({
+        const findUser = await prisma.user.findFirst({
             where: {
                 userId: interaction.user.id,
             },
         });
 
-        if (!user) {
+        if (!findUser) {
             const newUser = await prisma.user.create({
                 data: {
                     userId: interaction.user.id,
                     lastAttend: new Date(),
                     attendStreak: 1,
                     attendSum: 1,
+                    attendPerMonth: 1,
                 },
             });
 
-            const daysInMonth = now.daysInMonth();
-            const diff = daysInMonth - newUser.attendSum;
+            const attendPerMonth: number = newUser.attendPerMonth;
+            const diff: number = daysInMonth - attendPerMonth;
 
             await interaction.reply({ content: `${Emojis.checkmark} ・ Absen berhasil!`, ephemeral: true });
-
             await channel.send({
                 embeds: [
                     embed.addFields([
                         { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
-                        { name: "Total Kehadiran", value: `${newUser.attendSum}` },
-                        { name: "Kehadiran Beruntun", value: `${newUser.attendStreak}` },
-                        { name: "Absen Bulanan", value: `${newUser.attendSum}/${daysInMonth} (-${diff} hari)` },
+                        { name: "Total Kehadiran", value: `${newUser.attendSum} kali` },
+                        { name: "Kehadiran Beruntun", value: `${newUser.attendStreak} kali` },
+                        { name: "Absen Bulanan", value: `${attendPerMonth}/${daysInMonth} (-${diff} hari)` },
                     ]),
                 ],
             });
         } else {
-            const lastAttend = dayjs(user.lastAttend).utcOffset(7);
-            const currentDateToDaySum = now.year() * 365 + (now.month() + 1) * 30 + now.day();
-            const lastAttendDateToDaySum = lastAttend.year() * 365 + (lastAttend.month() + 1) * 30 + lastAttend.day();
+            const lastAttend = dayjs(findUser.lastAttend);
+            const lastAttendTimeToDaySum: number = Math.round(time.msToDay(lastAttend.toDate().getTime()));
+            const currentTimeToDaySum: number = Math.round(time.msToDay(now.toDate().getTime()));
 
-            if (currentDateToDaySum - lastAttendDateToDaySum >= 1) {
-                if (currentDateToDaySum - lastAttendDateToDaySum >= 2) {
-                    // Streak Failed
+            if (currentTimeToDaySum - lastAttendTimeToDaySum >= 1) {
+                // Attend success
+                if (currentTimeToDaySum - lastAttendTimeToDaySum >= 2) {
+                    // Streak failed
+                    const nextMonth = now.month() > lastAttend.month();
+                    const nextMonthAlsoNextYear = now.year() - lastAttend.year() == 1 && lastAttend.month() - now.month() == 11;
+                    if (nextMonth || nextMonthAlsoNextYear) {
+                        // Attend per month reset
+                        const updatedUser = await prisma.user.update({
+                            where: {
+                                userId: interaction.user.id,
+                            },
+                            data: {
+                                lastAttend: new Date(),
+                                attendStreak: 1,
+                                attendPerMonth: 1,
+                                attendSum: { increment: 1 },
+                            },
+                        });
 
-                    const updatedUser = await prisma.user.update({
-                        where: {
-                            userId: interaction.user.id,
-                        },
-                        data: {
-                            lastAttend: new Date(),
-                            attendStreak: 1,
-                            attendSum: { increment: 1 },
-                        },
-                    });
+                        const attendPerMonth: number = updatedUser.attendPerMonth;
+                        const diff: number = daysInMonth - attendPerMonth;
 
-                    const daysInMonth = now.daysInMonth();
-                    const diff = daysInMonth - updatedUser.attendSum;
+                        await interaction.reply({ content: `${Emojis.checkmark} ・ Absen berhasil!`, ephemeral: true });
+                        await channel.send({
+                            embeds: [
+                                embed.addFields([
+                                    { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
+                                    { name: "Total Kehadiran", value: `${updatedUser.attendSum} kali` },
+                                    { name: "Kehadiran Beruntun", value: `${updatedUser.attendStreak} kali` },
+                                    { name: "Absen Bulanan", value: `${attendPerMonth}/${daysInMonth} (-${diff} hari)` },
+                                ]),
+                            ],
+                        });
+                    } else {
+                        // Attend per month increase
+                        const updatedUser = await prisma.user.update({
+                            where: {
+                                userId: interaction.user.id,
+                            },
+                            data: {
+                                lastAttend: new Date(),
+                                attendStreak: 1,
+                                attendPerMonth: { increment: 1 },
+                                attendSum: { increment: 1 },
+                            },
+                        });
 
-                    await channel.send({
-                        embeds: [
-                            embed.addFields([
-                                { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
-                                { name: "Total Kehadiran", value: `${updatedUser.attendSum}` },
-                                { name: "Kehadiran Beruntun", value: `${updatedUser.attendStreak}` },
-                                { name: "Absen Bulanan", value: `${updatedUser.attendSum}/${daysInMonth} (-${diff} hari)` },
-                            ]),
-                        ],
-                    });
+                        const attendPerMonth: number = updatedUser.attendPerMonth;
+                        const diff: number = daysInMonth - attendPerMonth;
+
+                        await interaction.reply({ content: `${Emojis.checkmark} ・ Absen berhasil!`, ephemeral: true });
+                        await channel.send({
+                            embeds: [
+                                embed.addFields([
+                                    { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
+                                    { name: "Total Kehadiran", value: `${updatedUser.attendSum} kali` },
+                                    { name: "Kehadiran Beruntun", value: `${updatedUser.attendStreak} kali` },
+                                    { name: "Absen Bulanan", value: `${attendPerMonth}/${daysInMonth} (-${diff} hari)` },
+                                ]),
+                            ],
+                        });
+                    }
                 } else {
-                    // Streak Success
-                    const updatedUser = await prisma.user.update({
-                        where: {
-                            userId: interaction.user.id,
-                        },
-                        data: {
-                            lastAttend: new Date(),
-                            attendStreak: { increment: 1 },
-                            attendSum: { increment: 1 },
-                        },
-                    });
+                    // Streak success
+                    const nextMonth = now.month() > lastAttend.month();
+                    const nextMonthAlsoNextYear = now.year() - lastAttend.year() == 1 && lastAttend.month() - now.month() == 11;
+                    if (nextMonth || nextMonthAlsoNextYear) {
+                        // Attend per month reset
+                        const updatedUser = await prisma.user.update({
+                            where: {
+                                userId: interaction.user.id,
+                            },
+                            data: {
+                                lastAttend: new Date(),
+                                attendStreak: { increment: 1 },
+                                attendPerMonth: 1,
+                                attendSum: { increment: 1 },
+                            },
+                        });
 
-                    const daysInMonth = now.daysInMonth();
-                    const diff = daysInMonth - updatedUser.attendSum;
+                        const attendPerMonth: number = updatedUser.attendPerMonth;
+                        const diff: number = daysInMonth - attendPerMonth;
 
-                    await channel.send({
-                        embeds: [
-                            embed.addFields([
-                                { name: "Waktu", value: `${now.format("HH:mm")} WIB.` },
-                                { name: "Total Kehadiran", value: `${updatedUser.attendSum} kali.` },
-                                { name: "Kehadiran Beruntun", value: `${updatedUser.attendStreak} kali.` },
-                                { name: "Absen Bulanan", value: `${updatedUser.attendSum}/${daysInMonth} (-${diff} hari)` },
-                            ]),
-                        ],
-                    });
+                        await interaction.reply({ content: `${Emojis.checkmark} ・ Absen berhasil!`, ephemeral: true });
+                        await channel.send({
+                            embeds: [
+                                embed.addFields([
+                                    { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
+                                    { name: "Total Kehadiran", value: `${updatedUser.attendSum} kali` },
+                                    { name: "Kehadiran Beruntun", value: `${updatedUser.attendStreak} kali` },
+                                    { name: "Absen Bulanan", value: `${attendPerMonth}/${daysInMonth} (-${diff} hari)` },
+                                ]),
+                            ],
+                        });
+                    } else {
+                        // Attend per month increase
+                        const updatedUser = await prisma.user.update({
+                            where: {
+                                userId: interaction.user.id,
+                            },
+                            data: {
+                                lastAttend: new Date(),
+                                attendStreak: { increment: 1 },
+                                attendPerMonth: { increment: 1 },
+                                attendSum: { increment: 1 },
+                            },
+                        });
+
+                        const attendPerMonth: number = updatedUser.attendPerMonth;
+                        const diff: number = daysInMonth - attendPerMonth;
+
+                        await interaction.reply({ content: `${Emojis.checkmark} ・ Absen berhasil!`, ephemeral: true });
+                        await channel.send({
+                            embeds: [
+                                embed.addFields([
+                                    { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
+                                    { name: "Total Kehadiran", value: `${updatedUser.attendSum} kali` },
+                                    { name: "Kehadiran Beruntun", value: `${updatedUser.attendStreak} kali` },
+                                    { name: "Absen Bulanan", value: `${attendPerMonth}/${daysInMonth} (-${diff} hari)` },
+                                ]),
+                            ],
+                        });
+                    }
                 }
-
-                await interaction.reply({ content: `${Emojis.checkmark} ・ Absen berhasil!`, ephemeral: true });
             } else {
+                // Attend failed or already attend
                 await interaction.reply({ content: `${Emojis.redcross} ・ Anda sudah absen hari ini.`, ephemeral: true });
             }
         }

@@ -60,6 +60,13 @@ export class TimeUtils extends Utility {
     }
 
     /**
+     * @description Convert milliseconds into day
+     */
+    msToDay(ms: number): number {
+        return Math.round(ms / 1000 / 60 / 60 / 12);
+    }
+
+    /**
      * @description Pad a string with a certain length.
      */
     pad(num: number, size: number): string {

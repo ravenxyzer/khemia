@@ -15,9 +15,10 @@ model User {
   userId  String
   balance Int?
 
-  lastAttend   DateTime? @default(now())
-  attendSum    Int?      @default(0)
-  attendStreak Int?      @default(0)
+  lastAttend     DateTime? @default(now())
+  attendSum      Int?      @default(0)
+  attendStreak   Int?      @default(0)
+  attendPerMonth Int?      @default(0)
 
   @@unique([userId])
 }

@@ -6,5 +6,5 @@
     "singleQuote": false,
     "arrowParens": "always",
     "quoteProps": "consistent",
-    "printWidth": 130
+    "printWidth": 140
 }
