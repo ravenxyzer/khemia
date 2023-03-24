@@ -124,8 +124,10 @@ export class AttendanceHandler extends InteractionHandler {
                         ],
                     });
                 }
+
+                await interaction.reply({ content: `${Emojis.checkmark} ・ Absen berhasil!`, ephemeral: true });
             } else {
-                await interaction.reply({ content: `${Emojis.redcross} ・ Anda sudah absen hari ini.` });
+                await interaction.reply({ content: `${Emojis.redcross} ・ Anda sudah absen hari ini.`, ephemeral: true });
             }
         }
     }
