@@ -48,6 +48,20 @@ export class TimeUtils extends Utility {
     /**
      * @description Convert minutes into milliseconds.
      */
+    hoursToDays(hours: number): number {
+        return hours / 24;
+    }
+
+    /**
+     * @description Convert minutes into milliseconds.
+     */
+    minutesToHours(minutes: number): number {
+        return minutes / 60;
+    }
+
+    /**
+     * @description Convert minutes into milliseconds.
+     */
     minutesToMs(minutes: number): number {
         return minutes * 60 * 1000;
     }
@@ -62,8 +76,8 @@ export class TimeUtils extends Utility {
     /**
      * @description Convert milliseconds into day
      */
-    msToDay(ms: number): number {
-        return Math.round(ms / 1000 / 60 / 60 / 12);
+    msToDays(ms: number): number {
+        return ms / (1000 * 60 * 60 * 24);
     }
 
     /**
@@ -73,6 +87,13 @@ export class TimeUtils extends Utility {
         let s = num + "";
         while (s.length < size) s = "0" + s;
         return s;
+    }
+
+    /**
+     * @description Convert seconds into milliseconds.
+     */
+    secondsToMinutes(seconds: number): number {
+        return seconds / 60;
     }
 
     /**

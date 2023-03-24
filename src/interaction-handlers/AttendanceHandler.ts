@@ -5,7 +5,9 @@ import { ButtonInteraction, EmbedBuilder, TextChannel } from "discord.js";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import isYesterday from "dayjs/plugin/isYesterday";
 dayjs.extend(utc);
+dayjs.extend(isYesterday);
 
 import { Emojis, InteractionHandler } from "../libraries";
 
@@ -21,7 +23,7 @@ export class AttendanceHandler extends InteractionHandler {
     }
 
     public override async run(interaction: ButtonInteraction): Promise<void> {
-        const { funcs, time } = this.container.utilities;
+        const { funcs } = this.container.utilities;
         const { user } = this.container.client;
         const channel: TextChannel = interaction.guild.channels.cache.get("1087844895726784612") as TextChannel;
         const prisma: PrismaClient = new PrismaClient();
@@ -68,12 +70,10 @@ export class AttendanceHandler extends InteractionHandler {
             });
         } else {
             const lastAttend = dayjs(findUser.lastAttend).utcOffset(7);
-            const lastAttendTimeToDaySum: number = Math.round(time.msToDay(lastAttend.toDate().getTime()));
-            const currentTimeToDaySum: number = Math.round(time.msToDay(now.toDate().getTime()));
 
-            if (currentTimeToDaySum - lastAttendTimeToDaySum >= 1) {
+            if (lastAttend.isBefore(now, "day")) {
                 // Attend success
-                if (currentTimeToDaySum - lastAttendTimeToDaySum >= 2) {
+                if (lastAttend.isBefore(now.subtract(1, "day"), "day")) {
                     // Streak failed
                     const nextMonth = now.month() > lastAttend.month();
                     const nextMonthAlsoNextYear = now.year() - lastAttend.year() == 1 && lastAttend.month() - now.month() == 11;
