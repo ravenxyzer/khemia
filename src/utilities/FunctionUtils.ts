@@ -26,13 +26,6 @@ export class FunctionUtils extends Utility {
     }
 
     /**
-     * @description Prisma client
-     */
-    public prisma(): PrismaClient {
-        return new PrismaClient();
-    }
-
-    /**
      * @description Randomize a array.
      */
     public randomArray(array: string[]): string {

@@ -22,8 +22,8 @@ export class AttendanceHandler extends InteractionHandler {
     public override async run(interaction: ButtonInteraction): Promise<void> {
         const { funcs } = this.container.utilities;
         const client = this.container.client;
-        const prisma: PrismaClient = funcs.prisma();
         const channel: TextChannel = interaction.guild.channels.cache.get("1087844895726784612") as TextChannel;
+        const prisma: PrismaClient = new PrismaClient();
 
         const embed: EmbedBuilder = funcs.embed();
         embed.setAuthor({ name: "Kehadiran Staff!", iconURL: client.user.displayAvatarURL({ size: 4096 }) });

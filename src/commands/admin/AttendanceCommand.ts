@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder } from "@discordjs/builders";
 import { ApplyOptions } from "@sapphire/decorators";
-import { ButtonStyle, Message, APIMessageComponentEmoji } from "discord.js";
+import { ButtonStyle, Message } from "discord.js";
 
 import { Command } from "../../libraries";
 
@@ -19,17 +19,11 @@ export class AttendanceCommand extends Command {
         const { funcs } = this.container.utilities;
         await message.channel.send({
             embeds: [
-                funcs
-                    .embed()
-                    .setTitle("✍️ ・ Staff Attendance")
-                    .setDescription("> Tekan tombol dibawah untuk absen kehadiran!"),
+                funcs.embed().setTitle("✍️ ・ Staff Attendance").setDescription("> Tekan tombol dibawah untuk absen kehadiran!"),
             ],
             components: [
                 new ActionRowBuilder<ButtonBuilder>().setComponents(
-                    new ButtonBuilder()
-                        .setStyle(ButtonStyle.Secondary)
-                        .setLabel("Attend!")
-                        .setCustomId("_attendance-button")
+                    new ButtonBuilder().setStyle(ButtonStyle.Secondary).setLabel("Attend!").setCustomId("_attendance-button")
                 ),
             ],
         });
