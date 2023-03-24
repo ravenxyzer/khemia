@@ -50,7 +50,7 @@ export class AttendanceHandler extends InteractionHandler {
             });
 
             const daysInMonth = now.daysInMonth();
-            const diff = newUser.attendSum - daysInMonth;
+            const diff = daysInMonth - newUser.attendSum;
 
             await interaction.reply({ content: `${Emojis.checkmark} ・ Absen berhasil!`, ephemeral: true });
 
@@ -60,7 +60,7 @@ export class AttendanceHandler extends InteractionHandler {
                         { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
                         { name: "Total Kehadiran", value: `${newUser.attendSum}` },
                         { name: "Kehadiran Beruntun", value: `${newUser.attendStreak}` },
-                        { name: "Absen Bulanan", value: `${newUser.attendSum}/${daysInMonth} (-${diff})` },
+                        { name: "Absen Bulanan", value: `${newUser.attendSum}/${daysInMonth} (-${diff} hari)` },
                     ]),
                 ],
             });
@@ -85,7 +85,7 @@ export class AttendanceHandler extends InteractionHandler {
                     });
 
                     const daysInMonth = now.daysInMonth();
-                    const diff = updatedUser.attendSum - daysInMonth;
+                    const diff = daysInMonth - updatedUser.attendSum;
 
                     await channel.send({
                         embeds: [
@@ -93,7 +93,7 @@ export class AttendanceHandler extends InteractionHandler {
                                 { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
                                 { name: "Total Kehadiran", value: `${updatedUser.attendSum}` },
                                 { name: "Kehadiran Beruntun", value: `${updatedUser.attendStreak}` },
-                                { name: "Absen Bulanan", value: `${updatedUser.attendSum}/${daysInMonth} (-${diff})` },
+                                { name: "Absen Bulanan", value: `${updatedUser.attendSum}/${daysInMonth} (-${diff} hari)` },
                             ]),
                         ],
                     });
@@ -111,15 +111,15 @@ export class AttendanceHandler extends InteractionHandler {
                     });
 
                     const daysInMonth = now.daysInMonth();
-                    const diff = updatedUser.attendSum - daysInMonth;
+                    const diff = daysInMonth - updatedUser.attendSum;
 
                     await channel.send({
                         embeds: [
                             embed.addFields([
-                                { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
-                                { name: "Total Kehadiran", value: `${updatedUser.attendSum}` },
-                                { name: "Kehadiran Beruntun", value: `${updatedUser.attendStreak}` },
-                                { name: "Absen Bulanan", value: `${updatedUser.attendSum}/${daysInMonth} (-${diff})` },
+                                { name: "Waktu", value: `${now.format("HH:mm")} WIB.` },
+                                { name: "Total Kehadiran", value: `${updatedUser.attendSum} kali.` },
+                                { name: "Kehadiran Beruntun", value: `${updatedUser.attendStreak} kali.` },
+                                { name: "Absen Bulanan", value: `${updatedUser.attendSum}/${daysInMonth} (-${diff} hari)` },
                             ]),
                         ],
                     });
