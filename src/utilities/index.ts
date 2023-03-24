@@ -1,3 +1,3 @@
-export * from "./main/MessageUtils";
-export * from "./main/TimeUtils";
+export * from "./MessageUtils";
+export * from "./TimeUtils";
 export * from "./FunctionUtils";
