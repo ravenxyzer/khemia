@@ -20,7 +20,7 @@ export class AttendanceHandler extends InteractionHandler {
     }
 
     public override async run(interaction: ButtonInteraction): Promise<void> {
-        const { funcs, message } = this.container.utilities;
+        const { funcs } = this.container.utilities;
         const client = this.container.client;
         const prisma: PrismaClient = funcs.prisma();
         const channel: TextChannel = interaction.guild.channels.cache.get("1087844895726784612") as TextChannel;
@@ -40,36 +40,30 @@ export class AttendanceHandler extends InteractionHandler {
         });
 
         if (!user) {
-            try {
-                await prisma.user.create({
-                    data: {
-                        userId: interaction.user.id,
-                        lastAttend: new Date(),
-                        attendStreak: 1,
-                        attendSum: 1,
-                    },
-                });
-            } catch (e) {
-                const content = `${Emojis.redcross} ・ Terjadi galat pada database!`;
-                await interaction.reply({ content });
-            } finally {
-                const newUser = await prisma.user.findFirst({ where: { userId: interaction.user.id } });
-                const daysInMonth = now.daysInMonth();
-                const diff = newUser.attendSum - daysInMonth;
+            const newUser = await prisma.user.create({
+                data: {
+                    userId: interaction.user.id,
+                    lastAttend: new Date(),
+                    attendStreak: 1,
+                    attendSum: 1,
+                },
+            });
 
-                await interaction.reply({ content: `${Emojis.checkmark} ・ Absen berhasil!`, ephemeral: true });
+            const daysInMonth = now.daysInMonth();
+            const diff = newUser.attendSum - daysInMonth;
 
-                await channel.send({
-                    embeds: [
-                        embed.addFields([
-                            { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
-                            { name: "Total Kehadiran", value: `${newUser.attendSum}` },
-                            { name: "Kehadiran Beruntun", value: `${newUser.attendStreak}` },
-                            { name: "Absen Bulanan", value: `${newUser.attendSum}/${daysInMonth} (-${diff})` },
-                        ]),
-                    ],
-                });
-            }
+            await interaction.reply({ content: `${Emojis.checkmark} ・ Absen berhasil!`, ephemeral: true });
+
+            await channel.send({
+                embeds: [
+                    embed.addFields([
+                        { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
+                        { name: "Total Kehadiran", value: `${newUser.attendSum}` },
+                        { name: "Kehadiran Beruntun", value: `${newUser.attendStreak}` },
+                        { name: "Absen Bulanan", value: `${newUser.attendSum}/${daysInMonth} (-${diff})` },
+                    ]),
+                ],
+            });
         } else {
             const lastAttend = dayjs(user.lastAttend).utcOffset(7);
             const currentDateToDaySum = now.year() * 365 + (now.month() + 1) * 30 + now.day();
@@ -78,68 +72,57 @@ export class AttendanceHandler extends InteractionHandler {
             if (currentDateToDaySum - lastAttendDateToDaySum >= 1) {
                 if (currentDateToDaySum - lastAttendDateToDaySum >= 2) {
                     // Streak Failed
-                    try {
-                        await prisma.user.update({
-                            where: {
-                                userId: interaction.user.id,
-                            },
-                            data: {
-                                lastAttend: new Date(),
-                                attendStreak: 1,
-                                attendSum: { increment: 1 },
-                            },
-                        });
-                    } catch (e) {
-                        const content = `${Emojis.redcross} ・ Terjadi galat pada database!`;
-                        await interaction.reply({ content });
-                    } finally {
-                        const updatedUser = await prisma.user.findFirst({ where: { userId: interaction.user.id } });
-                        const daysInMonth = now.daysInMonth();
-                        const diff = updatedUser.attendSum - daysInMonth;
 
-                        await channel.send({
-                            embeds: [
-                                embed.addFields([
-                                    { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
-                                    { name: "Total Kehadiran", value: `${updatedUser.attendSum}` },
-                                    { name: "Kehadiran Beruntun", value: `${updatedUser.attendStreak}` },
-                                    { name: "Absen Bulanan", value: `${updatedUser.attendSum}/${daysInMonth} (-${diff})` },
-                                ]),
-                            ],
-                        });
-                    }
+                    const updatedUser = await prisma.user.update({
+                        where: {
+                            userId: interaction.user.id,
+                        },
+                        data: {
+                            lastAttend: new Date(),
+                            attendStreak: 1,
+                            attendSum: { increment: 1 },
+                        },
+                    });
+
+                    const daysInMonth = now.daysInMonth();
+                    const diff = updatedUser.attendSum - daysInMonth;
+
+                    await channel.send({
+                        embeds: [
+                            embed.addFields([
+                                { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
+                                { name: "Total Kehadiran", value: `${updatedUser.attendSum}` },
+                                { name: "Kehadiran Beruntun", value: `${updatedUser.attendStreak}` },
+                                { name: "Absen Bulanan", value: `${updatedUser.attendSum}/${daysInMonth} (-${diff})` },
+                            ]),
+                        ],
+                    });
                 } else {
                     // Streak Success
-                    try {
-                        await prisma.user.update({
-                            where: {
-                                userId: interaction.user.id,
-                            },
-                            data: {
-                                lastAttend: new Date(),
-                                attendStreak: { increment: 1 },
-                                attendSum: { increment: 1 },
-                            },
-                        });
-                    } catch (e) {
-                        const content = `${Emojis.redcross} ・ Terjadi galat pada database!`;
-                        await interaction.reply({ content });
-                    } finally {
-                        const updatedUser = await prisma.user.findFirst({ where: { userId: interaction.user.id } });
-                        const daysInMonth = now.daysInMonth();
-                        const diff = updatedUser.attendSum - daysInMonth;
+                    const updatedUser = await prisma.user.update({
+                        where: {
+                            userId: interaction.user.id,
+                        },
+                        data: {
+                            lastAttend: new Date(),
+                            attendStreak: { increment: 1 },
+                            attendSum: { increment: 1 },
+                        },
+                    });
 
-                        await channel.send({
-                            embeds: [
-                                embed.addFields([
-                                    { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
-                                    { name: "Total Kehadiran", value: `${updatedUser.attendSum}` },
-                                    { name: "Kehadiran Beruntun", value: `${updatedUser.attendStreak}` },
-                                    { name: "Absen Bulanan", value: `${updatedUser.attendSum}/${daysInMonth} (-${diff})` },
-                                ]),
-                            ],
-                        });
-                    }
+                    const daysInMonth = now.daysInMonth();
+                    const diff = updatedUser.attendSum - daysInMonth;
+
+                    await channel.send({
+                        embeds: [
+                            embed.addFields([
+                                { name: "Waktu", value: `${now.format("HH:mm")} WIB` },
+                                { name: "Total Kehadiran", value: `${updatedUser.attendSum}` },
+                                { name: "Kehadiran Beruntun", value: `${updatedUser.attendStreak}` },
+                                { name: "Absen Bulanan", value: `${updatedUser.attendSum}/${daysInMonth} (-${diff})` },
+                            ]),
+                        ],
+                    });
                 }
             } else {
                 await interaction.reply({ content: `${Emojis.redcross} ・ Anda sudah absen hari ini.` });
