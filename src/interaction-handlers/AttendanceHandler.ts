@@ -67,7 +67,7 @@ export class AttendanceHandler extends InteractionHandler {
                 ],
             });
         } else {
-            const lastAttend = dayjs(findUser.lastAttend);
+            const lastAttend = dayjs(findUser.lastAttend).utcOffset(7);
             const lastAttendTimeToDaySum: number = Math.round(time.msToDay(lastAttend.toDate().getTime()));
             const currentTimeToDaySum: number = Math.round(time.msToDay(now.toDate().getTime()));
 
