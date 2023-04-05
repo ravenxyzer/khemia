@@ -19,10 +19,9 @@
   "version": "1.0.0",
   "main": "dist/khemia.js",
   "scripts": {
-    "cpl": "tsc --skipLibCheck",
-    "cpl-w": "tsc --skipLibCheck -w",
-    "pm2": "pm2 start dist/khemia.js",
-    "start": "tsc --skipLibCheck && node ."
+    "compile": "tsc --skipLibCheck",
+    "compile:watch": "tsc --skipLibCheck -w",
+    "start": "node dist/khemia.js"
   },
   "keywords": [
     "discord-bot",
