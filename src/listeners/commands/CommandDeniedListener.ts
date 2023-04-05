@@ -37,10 +37,6 @@ export class MessageCommandDeniedListener extends Listener {
                 embed.setDescription("🛑・Only owner can run this command!");
                 return data.message.reply({ embeds: [embed] });
 
-            case Identifiers.PreconditionDbConnectedOnly:
-                embed.setDescription("🛑・Cannot run this command, try again later.");
-                return data.message.reply({ embeds: [embed] });
-
             default:
                 embed.setDescription(`🛑・${error.identifier} | ${error.message}`);
                 return data.message.reply({ embeds: [embed] });
@@ -73,10 +69,6 @@ export class ChatInputCommandDeniedListener extends Listener {
                 embed.setDescription("🛑・Only owner can run this command!");
                 return data.interaction.reply({ embeds: [embed] });
 
-            case Identifiers.PreconditionDbConnectedOnly:
-                embed.setDescription("🛑・Cannot run this command, try again later.");
-                return data.interaction.reply({ embeds: [embed] });
-
             default:
                 embed.setDescription(`🛑・${error.identifier}\n\`\`\`${error.message}\`\`\``);
                 return data.interaction.reply({ embeds: [embed] });
@@ -107,10 +99,6 @@ export class ContextMenuCommandDeniedListener extends Listener {
 
             case Identifiers.PreconditionOwnerOnly:
                 embed.setDescription("🛑・Only owner can run this command!");
-                return data.interaction.reply({ embeds: [embed] });
-
-            case Identifiers.PreconditionDbConnectedOnly:
-                embed.setDescription("🛑・Cannot run this command, try again later.");
                 return data.interaction.reply({ embeds: [embed] });
 
             default:
