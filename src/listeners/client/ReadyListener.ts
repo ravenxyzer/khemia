@@ -12,7 +12,7 @@ import { Presences, Listener } from "../../libraries";
 })
 export class ReadyListener extends Listener {
     public async run(): Promise<void> {
-        const { logger, client } = this.container;
+        const { logger, client, utilities } = this.container;
 
         logger.info(`Logged in as ${client.user.tag}`);
 
@@ -20,7 +20,7 @@ export class ReadyListener extends Listener {
             client.user.setPresence({
                 activities: [
                     {
-                        name: Presences[0],
+                        name: utilities.funcs.randomArray(Presences),
                         type: ActivityType.Watching,
                     },
                 ],
