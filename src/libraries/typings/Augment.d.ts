@@ -6,10 +6,12 @@ import * as Preconditions from "../../preconditions";
 declare module "@sapphire/framework" {
     interface Preconditions {
         OwnerOnly: never;
+        ModeratorOnly: never;
     }
 
     const enum Identifiers {
         PreconditionOwnerOnly = "preconditionOwnerOnly",
+        PreconditionModeratorOnly = "preconditionModeratorOnly",
     }
 }
 

@@ -18,6 +18,15 @@ export const Developers: string[] = [
 ];
 
 /**
+ * @description Khemia developers Discord user-ids
+ */
+export const Moderators: string[] = [
+    "387886389800337409", // Zarr#2072
+    "327849142774923266", // aeviterna#4253
+    "428859474862931970", // Faun#9075
+];
+
+/**
  * @description Khemia emojis collection
  */
 export const Emojis = {

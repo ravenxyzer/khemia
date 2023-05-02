@@ -7,10 +7,8 @@ export class EmbedBuilder extends BaseEmbedBuilder {
         this.setColor(Colors.default);
     }
 
-    isErrorEmbed(value: boolean): this {
-        if (value) {
-            this.setColor(Colors.error);
-        }
+    isErrorEmbed(): this {
+        this.setColor(Colors.error);
 
         return this;
     }

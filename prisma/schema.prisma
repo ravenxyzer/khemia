@@ -22,3 +22,17 @@ model User {
 
   @@unique([userId])
 }
+
+model Pricelist {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  uniqueId String @unique @default("_pricelist")
+
+  oculi       String[]
+  materials   String[]
+  chunks      String[]
+  bosses      String[]
+  domains     String[]
+  weapons     String[]
+  mainQuests  String[]
+  worldQuests String[]
+}

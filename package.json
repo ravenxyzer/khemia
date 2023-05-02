@@ -2,14 +2,16 @@
   "dependencies": {
     "@prisma/client": "^4.11.0",
     "@sapphire/decorators": "^6.0.0",
-    "@sapphire/discord.js-utilities": "^6.0.2",
+    "@sapphire/discord.js-utilities": "^6.0.6",
     "@sapphire/framework": "^4.2.2",
     "@sapphire/plugin-subcommands": "^4.0.0",
     "@sapphire/plugin-utilities-store": "^1.0.0",
     "@sapphire/time-utilities": "^1.7.8",
+    "@vermaysha/hoyolab-api": "^3.0.0",
     "dayjs": "^1.11.7",
     "discord.js": "^14.8.0",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@sapphire/ts-config": "^3.3.4",
@@ -21,7 +23,8 @@
   "scripts": {
     "compile": "tsc --skipLibCheck",
     "compile:watch": "tsc --skipLibCheck -w",
-    "start": "node dist/khemia.js"
+    "start": "tsc --skipLibCheck && node dist/khemia.js"
+    
   },
   "keywords": [
     "discord-bot",

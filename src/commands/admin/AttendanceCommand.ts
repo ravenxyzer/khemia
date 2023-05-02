@@ -14,13 +14,12 @@ import { Command } from "../../libraries";
     requiredUserPermissions: ["SendMessages"],
     preconditions: ["OwnerOnly"],
 })
-export class AttendanceCommand extends Command {
+export default class AttendanceCommand extends Command {
     public override async messageRun(message: Message): Promise<void> {
         const { funcs } = this.container.utilities;
+
         await message.channel.send({
-            embeds: [
-                funcs.embed().setTitle("✍️ ・ Staff Attendance").setDescription("> Tekan tombol dibawah untuk absen kehadiran!"),
-            ],
+            embeds: [funcs.embed().setTitle("✍️ ・ Staff Attendance").setDescription("> Tekan tombol dibawah untuk absen kehadiran!")],
             components: [
                 new ActionRowBuilder<ButtonBuilder>().setComponents(
                     new ButtonBuilder().setStyle(ButtonStyle.Secondary).setLabel("Attend!").setCustomId("_attendance-button")
